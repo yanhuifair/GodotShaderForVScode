@@ -1,0 +1,17 @@
+.vscodeignore
+.gitignore
+.vscode/
+**/.DS_Store
+*.vsix
+*.gdshader
+**/*.ts
+**/*.ts.map
+**/*.js.map
+**/*.d.ts
+**/*.d.ts.map
+node_modules
+src
+tsconfig.json
+package-lock.json
+auto-version.js
+

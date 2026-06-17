@@ -1,0 +1,616 @@
+{
+	"Canvas Item Shader": {
+		"prefix": "shader-canvas",
+		"body": [
+			"shader_type canvas_item;",
+			"",
+			"// Uniforms",
+			"uniform vec4 modulate_color : source_color = vec4(1.0);",
+			"uniform float amount : hint_range(0.0, 1.0) = 0.5;",
+			"",
+			"void fragment() {",
+			"\t$0",
+			"\tCOLOR = texture(TEXTURE, UV);",
+			"}"
+		],
+		"description": "Basic CanvasItem shader template"
+	},
+	"Spatial Shader": {
+		"prefix": "shader-spatial",
+		"body": [
+			"shader_type spatial;",
+			"render_mode cull_back, diffuse_lambert, specular_schlick_ggx;",
+			"",
+			"// Uniforms",
+			"uniform vec4 albedo : source_color = vec4(1.0);",
+			"uniform sampler2D texture_map : hint_white_texture;",
+			"uniform float metallic : hint_range(0.0, 1.0) = 0.0;",
+			"uniform float roughness : hint_range(0.0, 1.0) = 1.0;",
+			"",
+			"void vertex() {",
+			"\t$0",
+			"}",
+			"",
+			"void fragment() {",
+			"\tALBEDO = albedo.rgb;",
+			"\tMETALLIC = metallic;",
+			"\tROUGHNESS = roughness;",
+			"}"
+		],
+		"description": "Basic Spatial shader template"
+	},
+	"Sky Shader": {
+		"prefix": "shader-sky",
+		"body": [
+			"shader_type sky;",
+			"render_mode use_half_res_pass;",
+			"",
+			"// Uniforms",
+			"uniform vec4 sky_color : source_color = vec4(0.4, 0.6, 1.0, 1.0);",
+			"uniform float energy : hint_range(0.0, 2.0) = 1.0;",
+			"",
+			"void sky() {",
+			"\t$0",
+			"\tCOLOR = sky_color.rgb;",
+			"\tALPHA = sky_color.a;",
+			"}"
+		],
+		"description": "Sky shader template"
+	},
+	"Fog Shader": {
+		"prefix": "shader-fog",
+		"body": [
+			"shader_type fog;",
+			"",
+			"// Uniforms",
+			"uniform vec4 fog_color : source_color = vec4(0.5, 0.6, 0.7, 1.0);",
+			"uniform float density : hint_range(0.0, 1.0) = 0.5;",
+			"",
+			"void fog() {",
+			"\t$0",
+			"\tALBEDO = fog_color.rgb;",
+			"\tDENSITY = density;",
+			"}"
+		],
+		"description": "Fog shader template"
+	},
+	"Particles Shader": {
+		"prefix": "shader-particles",
+		"body": [
+			"shader_type particles;",
+			"",
+			"// Uniforms",
+			"uniform float speed : hint_range(0.0, 10.0) = 1.0;",
+			"",
+			"void vertex() {",
+			"\t$0",
+			"}",
+			"",
+			"void fragment() {",
+			"}"
+		],
+		"description": "Basic Particles shader template"
+	},
+	"Complete Canvas Item Shader": {
+		"prefix": "shader-canvas-full",
+		"body": [
+			"shader_type canvas_item;",
+			"",
+			"// ============================================================================",
+			"// Uniforms",
+			"// ============================================================================",
+			"uniform vec4 modulate_color : source_color = vec4(1.0);",
+			"uniform float time_scale : hint_range(0.0, 5.0) = 1.0;",
+			"uniform sampler2D noise_texture : hint_white_texture;",
+			"",
+			"// ============================================================================",
+			"// Vertex Function",
+			"// ============================================================================",
+			"void vertex() {",
+			"\t// Vertex shader code here",
+			"\t$0",
+			"}",
+			"",
+			"// ============================================================================",
+			"// Fragment Function",
+			"// ============================================================================",
+			"void fragment() {",
+			"\t// Sample texture",
+			"\tvec4 tex_color = texture(TEXTURE, UV);",
+			"\t",
+			"\t// Apply modulation",
+			"\tCOLOR = tex_color * modulate_color;",
+			"}"
+		],
+		"description": "Complete CanvasItem shader with comments"
+	},
+	"Complete Spatial Shader": {
+		"prefix": "shader-spatial-full",
+		"body": [
+			"shader_type spatial;",
+			"render_mode cull_back, diffuse_lambert, specular_schlick_ggx;",
+			"",
+			"// ============================================================================",
+			"// Uniforms",
+			"// ============================================================================",
+			"uniform vec4 albedo : source_color = vec4(1.0);",
+			"uniform sampler2D albedo_texture : hint_white_texture;",
+			"uniform float metallic : hint_range(0.0, 1.0) = 0.0;",
+			"uniform float roughness : hint_range(0.0, 1.0) = 1.0;",
+			"uniform vec3 emission : source_color = vec3(0.0);",
+			"",
+			"// ============================================================================",
+			"// Vertex Function",
+			"// ============================================================================",
+			"void vertex() {",
+			"\t// Animate vertex position",
+			"\t${1:VERTEX.y += sin(TIME * 2.0 + VERTEX.x) * 0.1;}",
+			"\t$0",
+			"}",
+			"",
+			"// ============================================================================",
+			"// Fragment Function",
+			"// ============================================================================",
+			"void fragment() {",
+			"\t// Sample albedo texture",
+			"\tvec3 albedo_tex = texture(albedo_texture, UV).rgb;",
+			"\t",
+			"\t// Set material properties",
+			"\tALBEDO = albedo.rgb * albedo_tex;",
+			"\tMETALLIC = metallic;",
+			"\tROUGHNESS = roughness;",
+			"\tEMISSION = emission;",
+			"}",
+			"",
+			"// ============================================================================",
+			"// Light Function",
+			"// ============================================================================",
+			"void light() {",
+			"\t// Custom lighting calculation",
+			"\tDIFFUSE_LIGHT = vec3(1.0);",
+			"\tSPECULAR_LIGHT = vec3(1.0);",
+			"}"
+		],
+		"description": "Complete Spatial shader with vertex, fragment, and light functions"
+	},
+	"Vertex Function": {
+		"prefix": "func-vertex",
+		"body": [
+			"void vertex() {",
+			"\t$0",
+			"}"
+		],
+		"description": "Vertex function"
+	},
+	"Fragment Function": {
+		"prefix": "func-fragment",
+		"body": [
+			"void fragment() {",
+			"\t$0",
+			"}"
+		],
+		"description": "Fragment function"
+	},
+	"Light Function": {
+		"prefix": "func-light",
+		"body": [
+			"void light() {",
+			"\t$0",
+			"}"
+		],
+		"description": "Light function"
+	},
+	"Sky Function": {
+		"prefix": "sky-func",
+		"body": [
+			"void sky() {",
+			"\t$0",
+			"}"
+		],
+		"description": "Sky function"
+	},
+	"Fog Function": {
+		"prefix": "fog-func",
+		"body": [
+			"void fog() {",
+			"\t$0",
+			"}"
+		],
+		"description": "Fog function"
+	},
+	"Uniform Declaration": {
+		"prefix": "uniform",
+		"body": [
+			"uniform ${1:type} ${2:name}${3:: hint_${4:hint}} = ${5:value};"
+		],
+		"description": "Uniform declaration"
+	},
+	"Uniform with Range": {
+		"prefix": "uniform-range",
+		"body": [
+			"uniform ${1:float} ${2:name} : hint_range(${3:0.0}, ${4:1.0}) = ${5:0.5};"
+		],
+		"description": "Uniform with range hint"
+	},
+	"Uniform with Color": {
+		"prefix": "uniform-color",
+		"body": [
+			"uniform vec4 ${1:name} : source_color = vec4(${2:1.0, 1.0, 1.0, 1.0});"
+		],
+		"description": "Uniform with color hint"
+	},
+	"Uniform with Texture": {
+		"prefix": "uniform-texture",
+		"body": [
+			"uniform sampler2D ${1:name} : hint_${2:white_texture|black_albedo|normal|depth_texture|screen_texture};"
+		],
+		"description": "Uniform with texture hint"
+	},
+	"Uniform with Filter": {
+		"prefix": "uniform-filter",
+		"body": [
+			"uniform sampler2D ${1:name} : ${2:repeat_enable|filter_nearest|filter_linear};"
+		],
+		"description": "Uniform with filter hint"
+	},
+	"Varying Declaration": {
+		"prefix": "varying",
+		"body": [
+			"varying ${1:vec2} ${2:name};"
+		],
+		"description": "Varying declaration"
+	},
+	"If Statement": {
+		"prefix": "if",
+		"body": [
+			"if (${1:condition}) {",
+			"\t$0",
+			"}"
+		],
+		"description": "If statement"
+	},
+	"If-Else Statement": {
+		"prefix": "ifelse",
+		"body": [
+			"if (${1:condition}) {",
+			"\t$0",
+			"} else {",
+			"\t",
+			"}"
+		],
+		"description": "If-else statement"
+	},
+	"For Loop": {
+		"prefix": "for",
+		"body": [
+			"for (int ${1:i} = 0; ${1:i} < ${2:10}; ${1:i}++) {",
+			"\t$0",
+			"}"
+		],
+		"description": "For loop"
+	},
+	"While Loop": {
+		"prefix": "while",
+		"body": [
+			"while (${1:condition}) {",
+			"\t$0",
+			"}"
+		],
+		"description": "While loop"
+	},
+	"Struct Definition": {
+		"prefix": "struct",
+		"body": [
+			"struct ${1:Name} {",
+			"\t${2:vec3} ${3:field};",
+			"};"
+		],
+		"description": "Struct definition"
+	},
+	"Vec2 Constructor": {
+		"prefix": "ctor-vec2",
+		"body": [
+			"vec2(${1:0.0}, ${2:0.0})"
+		],
+		"description": "Vec2 constructor"
+	},
+	"Vec3 Constructor": {
+		"prefix": "ctor-vec3",
+		"body": [
+			"vec3(${1:0.0}, ${2:0.0}, ${3:0.0})"
+		],
+		"description": "Vec3 constructor"
+	},
+	"Vec4 Constructor": {
+		"prefix": "ctor-vec4",
+		"body": [
+			"vec4(${1:0.0}, ${2:0.0}, ${3:0.0}, ${4:1.0})"
+		],
+		"description": "Vec4 constructor"
+	},
+	"Mat4 Constructor": {
+		"prefix": "ctor-mat4",
+		"body": [
+			"mat4(${1:1.0}, ${2:0.0}, ${3:0.0}, ${4:0.0},",
+			"\t ${5:0.0}, ${6:1.0}, ${7:0.0}, ${8:0.0},",
+			"\t ${9:0.0}, ${10:0.0}, ${11:1.0}, ${12:0.0},",
+			"\t ${13:0.0}, ${14:0.0}, ${15:0.0}, ${16:1.0})"
+		],
+		"description": "Mat4 constructor"
+	},
+	"Texture Sample": {
+		"prefix": "sample-texture",
+		"body": [
+			"texture(${1:TEXTURE}, ${2:UV})"
+		],
+		"description": "Sample texture"
+	},
+	"TextureLod Sample": {
+		"prefix": "sample-texturelod",
+		"body": [
+			"textureLod(${1:TEXTURE}, ${2:UV}, ${3:0.0})"
+		],
+		"description": "Sample texture with LOD"
+	},
+	"Time Variable": {
+		"prefix": "builtin-time",
+		"body": [
+			"TIME"
+		],
+		"description": "Built-in TIME variable"
+	},
+	"Vertex Position": {
+		"prefix": "builtin-vertex",
+		"body": [
+			"VERTEX"
+		],
+		"description": "Built-in VERTEX variable"
+	},
+	"Normal Vector": {
+		"prefix": "set-normal",
+		"body": [
+			"NORMAL"
+		],
+		"description": "Built-in NORMAL variable"
+	},
+	"Tangent Vector": {
+		"prefix": "builtin-tangent",
+		"body": [
+			"TANGENT"
+		],
+		"description": "Built-in TANGENT variable"
+	},
+	"Binormal Vector": {
+		"prefix": "builtin-binormal",
+		"body": [
+			"BINORMAL"
+		],
+		"description": "Built-in BINORMAL variable"
+	},
+	"UV Coordinates": {
+		"prefix": "builtin-uv",
+		"body": [
+			"UV"
+		],
+		"description": "Built-in UV variable"
+	},
+	"UV2 Coordinates": {
+		"prefix": "builtin-uv2",
+		"body": [
+			"UV2"
+		],
+		"description": "Built-in UV2 variable"
+	},
+	"Screen UV": {
+		"prefix": "builtin-screen-uv",
+		"body": [
+			"SCREEN_UV"
+		],
+		"description": "Built-in SCREEN_UV variable"
+	},
+	"Color Output": {
+		"prefix": "set-color",
+		"body": [
+			"COLOR = ${1:vec4(1.0)};"
+		],
+		"description": "Set COLOR output (snippet: set-color)"
+	},
+	"Albedo Output": {
+		"prefix": "set-albedo",
+		"body": [
+			"ALBEDO = ${1:vec3(1.0)};"
+		],
+		"description": "Set ALBEDO output (snippet: set-albedo)"
+	},
+	"Alpha Output": {
+		"prefix": "set-alpha",
+		"body": [
+			"ALPHA = ${1:1.0};"
+		],
+		"description": "Set ALPHA output (snippet: set-alpha)"
+	},
+	"Alpha Scissor Threshold": {
+		"prefix": "alpha-scissor",
+		"body": [
+			"ALPHA_SCISSOR_THRESHOLD = ${1:0.5};"
+		],
+		"description": "Set ALPHA_SCISSOR_THRESHOLD（Alpha 剪刀阈值）"
+	},
+	"Metal Metallic Output": {
+		"prefix": "set-metallic",
+		"body": [
+			"METALLIC = ${1:0.0};"
+		],
+		"description": "Set METALLIC output"
+	},
+	"Roughness Output": {
+		"prefix": "set-roughness",
+		"body": [
+			"ROUGHNESS = ${1:1.0};"
+		],
+		"description": "Set ROUGHNESS output"
+	},
+	"Emission Output": {
+		"prefix": "set-emission",
+		"body": [
+			"EMISSION = ${1:vec3(0.0)};"
+		],
+		"description": "Set EMISSION output"
+	},
+	"Normal Map Output": {
+		"prefix": "set-normal-map",
+		"body": [
+			"NORMAL_MAP = ${1:vec3(0.5, 0.5, 1.0)};"
+		],
+		"description": "Set NORMAL_MAP output"
+	},
+	"Normal Map Depth": {
+		"prefix": "set-normal-depth",
+		"body": [
+			"NORMAL_MAP_DEPTH = ${1:1.0};"
+		],
+		"description": "Set NORMAL_MAP_DEPTH"
+	},
+	"Animate Vertex Position": {
+		"prefix": "anim-vertex",
+		"body": [
+			"VERTEX.y += sin(TIME * ${1:2.0} + VERTEX.x * ${2:1.0}) * ${3:0.1};"
+		],
+		"description": "Animate vertex position with sine wave"
+	},
+	"Animate UV": {
+		"prefix": "anim-uv",
+		"body": [
+			"UV += vec2(${1:0.0}, ${2:0.0}) * TIME * ${3:0.1};"
+		],
+		"description": "Animate UV coordinates"
+	},
+	"Lerp Color": {
+		"prefix": "math-lerp",
+		"body": [
+			"mix(${1:color1}, ${2:color2}, ${3:0.5})"
+		],
+		"description": "Linear interpolation (mix)"
+	},
+	"Clamp Value": {
+		"prefix": "math-clamp",
+		"body": [
+			"clamp(${1:value}, ${2:0.0}, ${3:1.0})"
+		],
+		"description": "Clamp value between min and max"
+	},
+	"Smoothstep": {
+		"prefix": "math-smoothstep",
+		"body": [
+			"smoothstep(${1:0.0}, ${2:1.0}, ${3:value})"
+		],
+		"description": "Smoothstep interpolation"
+	},
+	"Normalize Vector": {
+		"prefix": "math-normalize",
+		"body": [
+			"normalize(${1:vector})"
+		],
+		"description": "Normalize vector"
+	},
+	"Dot Product": {
+		"prefix": "math-dot",
+		"body": [
+			"dot(${1:vector1}, ${2:vector2})"
+		],
+		"description": "Dot product"
+	},
+	"Cross Product": {
+		"prefix": "math-cross",
+		"body": [
+			"cross(${1:vector1}, ${2:vector2})"
+		],
+		"description": "Cross product"
+	},
+	"Length of Vector": {
+		"prefix": "math-length",
+		"body": [
+			"length(${1:vector})"
+		],
+		"description": "Length of vector"
+	},
+	"Distance Between Points": {
+		"prefix": "math-distance",
+		"body": [
+			"distance(${1:point1}, ${2:point2})"
+		],
+		"description": "Distance between two points"
+	},
+	"Fresnel Effect": {
+		"prefix": "fresnel",
+		"body": [
+			"float fresnel = pow(1.0 - max(dot(NORMAL, VIEW), 0.0), ${1:3.0});"
+		],
+		"description": "Fresnel effect calculation"
+	},
+	"Hemisphere Lighting": {
+		"prefix": "hemi-light",
+		"body": [
+			"vec3 hemi_light = mix(${1:ground_color}, ${2:sky_color}, NORMAL.y * 0.5 + 0.5);"
+		],
+		"description": "Hemisphere lighting"
+	},
+	"Phong Lighting": {
+		"prefix": "phong",
+		"body": [
+			"vec3 light_dir = normalize(${1:light_pos} - VERTEX);",
+			"float diff = max(dot(NORMAL, light_dir), 0.0);",
+			"vec3 diffuse = diff * ${2:light_color};"
+		],
+		"description": "Phong lighting calculation"
+	},
+	"Comment Section": {
+		"prefix": "comment",
+		"body": [
+			"// ============================================================================",
+			"// ${1:Section Name}",
+			"// ============================================================================",
+			"$0"
+		],
+		"description": "Add a comment section separator"
+	},
+	"TODO Comment": {
+		"prefix": "todo",
+		"body": [
+			"// TODO: ${1:description}"
+		],
+		"description": "Add a TODO comment"
+	},
+	"FIXME Comment": {
+		"prefix": "fixme",
+		"body": [
+			"// FIXME: ${1:description}"
+		],
+		"description": "Add a FIXME comment"
+	},
+	"Preprocessor Ifdef": {
+		"prefix": "ifdef",
+		"body": [
+			"#ifdef ${1:DEFINE}",
+			"\t$0",
+			"#endif"
+		],
+		"description": "Preprocessor #ifdef block"
+	},
+	"Preprocessor Ifndef": {
+		"prefix": "ifndef",
+		"body": [
+			"#ifndef ${1:DEFINE}",
+			"\t$0",
+			"#endif"
+		],
+		"description": "Preprocessor #ifndef block"
+	},
+	"Preprocessor Define": {
+		"prefix": "define",
+		"body": [
+			"#define ${1:NAME} ${2:value}"
+		],
+		"description": "Preprocessor #define"
+	}
+}

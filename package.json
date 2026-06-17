@@ -1,0 +1,123 @@
+{
+	"name": "godot-shader-for-vscode",
+	"displayName": "Godot Shader For VSCode",
+	"description": "The best Godot Shader development extension. / 最佳的 Godot Shader 开发插件。",
+	"version": "1.0.89",
+	"license": "MIT",
+	"publisher": "FairYan",
+	"icon": "images/logo.png",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/yanhuifair/GodotShaderForVScode"
+	},
+	"bugs": {
+		"url": "https://github.com/yanhuifair/GodotShaderForVScode/issues"
+	},
+	"galleryBanner": {
+		"color": "#478cbf",
+		"theme": "dark"
+	},
+	"keywords": [
+		"godot",
+		"shader",
+		"gdshader",
+		"godot-shader",
+		"glsl",
+		"godotengine"
+	],
+	"engines": {
+		"vscode": "^1.120.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Formatters",
+		"Snippets"
+	],
+	"activationEvents": [
+		"onLanguage:godot-shader"
+	],
+	"main": "./out/extension",
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"package": "node auto-version.js && npm run vscode:prepublish && npx vsce package --no-dependencies"
+	},
+	"contributes": {
+		"languages": [
+			{
+				"id": "godot-shader",
+				"aliases": [
+					"Godot Shader",
+					"godot-shader"
+				],
+				"extensions": [
+					".gdshader",
+					".gdshaderinc"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "godot-shader",
+				"scopeName": "source.gdshader",
+				"path": "./syntaxes/godot-shader.tmLanguage.json"
+			}
+		],
+		"snippets": [
+			{
+				"language": "godot-shader",
+				"path": "./snippets/godot-shader.json"
+			}
+		],
+		"configuration": {
+			"title": "Godot Shader",
+			"properties": {
+				"godot-shader.general.language": {
+					"type": "string",
+					"default": "en",
+					"enum": [
+						"en",
+						"zh"
+					],
+					"enumDescriptions": [
+						"English prompts (default)",
+						"中文提示"
+					],
+					"description": "Prompt language / 提示语言"
+				},
+				"godot-shader.diagnostics.checkBuiltinScope": {
+					"type": "boolean",
+					"default": true,
+					"description": "Validate built-in variable scope per shader type / 检查内置变量使用范围"
+				},
+				"godot-shader.diagnostics.strictMode": {
+					"type": "boolean",
+					"default": false,
+					"description": "Strict mode: extra warnings / 严格模式：额外警告"
+				},
+				"godot-shader.formatting.braceNewLine": {
+					"type": "boolean",
+					"default": false,
+					"description": "Place opening brace on new line / 大括号另起一行"
+				},
+				"godot-shader.inlayHints.showParameterNames": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show parameter name hints when calling built-in functions / 调用内置函数时显示参数名提示"
+				},
+				"godot-shader.colorPicker.enabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show color picker for vec3/vec4/hex color values / 为颜色值显示颜色选择器"
+				}
+			}
+		}
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.120.0",
+		"@types/node": "^18.0.0",
+		"typescript": "^5.8.0"
+	}
+}

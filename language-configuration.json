@@ -1,0 +1,50 @@
+{
+	"comments": {
+		"lineComment": "//",
+		"blockComment": [
+			"/*",
+			"*/"
+		]
+	},
+	"brackets": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"]
+	],
+	"autoClosingPairs": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"],
+		["\"", "\""],
+		["'", "'"]
+	],
+	"surroundingPairs": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"],
+		["\"", "\""],
+		["'", "'"],
+		["<", ">"]
+	],
+	"folding": {
+		"markers": {
+			"start": "\\{\\s*$",
+			"end": "^\\s*\\}"
+		}
+	},
+	"indentationRules": {
+		"increaseIndentPattern": "^.*\\{\\s*$",
+		"decreaseIndentPattern": "^\\s*\\}.*$"
+	},
+	"onEnterRules": [
+		{
+			"beforeText": "^.*\\{[^}]*$",
+			"afterText": "^\\s*\\}",
+			"action": { "indent": "indentOutdent" }
+		},
+		{
+			"beforeText": "^.*\\{[^}]*$",
+			"action": { "indent": "indent" }
+		}
+	]
+}
