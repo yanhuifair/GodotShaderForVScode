@@ -41,7 +41,8 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package": "node auto-version.js && npm run vscode:prepublish && npx vsce package --no-dependencies"
+    "package": "node auto-version.js && npm run vscode:prepublish && npx vsce package --no-dependencies",
+    "publish": "npx vsce publish --no-dependencies"
   },
   "contributes": {
     "languages": [
