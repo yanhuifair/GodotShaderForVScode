@@ -149,7 +149,7 @@
       "patterns": [
         {
           "name": "constant.language.gdshader",
-          "match": "\\b(TIME|PI|TAU|E|OUTPUT_IS_SRGB|CLIP_SPACE_FAR|VIEWPORT_SIZE|CURRENT_RENDERER|RENDERER_FORWARD_PLUS|RENDERER_MOBILE|RENDERER_COMPATIBILITY|RENDERER_FORWARD)\\b"
+          "match": "\\b(TIME|PI|TAU|E|OUTPUT_IS_SRGB|CLIP_SPACE_FAR|VIEWPORT_SIZE|CURRENT_RENDERER|RENDERER_FORWARD_PLUS|RENDERER_MOBILE|RENDERER_COMPATIBILITY|RENDERER_FORWARD|IS_MULTIVIEW|IN_SHADOW_PASS)\\b"
         }
       ]
     },
@@ -189,7 +189,7 @@
       "patterns": [
         {
           "name": "variable.language.gdshader",
-          "match": "\\b(DIFFUSE_LIGHT|LIGHT|LIGHT_COLOR|LIGHT_DIFFUSE|LIGHT_DIRECTION|LIGHT_ENERGY|LIGHT_IS_DIRECTIONAL|LIGHT_POSITION|LIGHT_SPECULAR|LIGHT_VERTEX|SPECULAR_AMOUNT|SPECULAR_LIGHT|SHADOW_MODULATE|ATTENUATION)\\b"
+          "match": "\\b(DIFFUSE_LIGHT|LIGHT|LIGHT_COLOR|LIGHT_DIRECTION|LIGHT_ENERGY|LIGHT_IS_DIRECTIONAL|LIGHT_POSITION|LIGHT_VERTEX|SPECULAR_AMOUNT|SPECULAR_LIGHT|ATTENUATION)\\b"
         }
       ]
     },
@@ -237,7 +237,7 @@
       "patterns": [
         {
           "name": "support.function.builtin.gdshader",
-          "match": "\\b(texture|textureLod|textureProj|textureGrad|textureCube|textureCubeLod|textureArray|mix|clamp|smoothstep|step|min|max|abs|sign|floor|ceil|round|trunc|fract|mod|pow|sqrt|inversesqrt|exp|exp2|log|log2|sin|cos|tan|asin|acos|atan|sinh|cosh|tanh|asinh|acosh|atanh|length|distance|dot|cross|normalize|reflect|refract|faceforward|determinant|transpose|inverse|outerProduct|dFdx|dFdy|fwidth|radians|degrees|bool|int|uint|float|vec2|vec3|vec4|mat2|mat3|mat4)\\b"
+          "match": "\\b(texture|textureLod|textureProj|textureGrad|textureProjLod|textureProjGrad|textureCube|textureCubeLod|textureArray|textureSize|textureQueryLod|textureQueryLevels|textureGather|texelFetch|mix|clamp|smoothstep|step|min|max|abs|sign|floor|ceil|round|roundEven|trunc|fract|mod|modf|fma|pow|sqrt|inversesqrt|exp|exp2|log|log2|sin|cos|tan|asin|acos|atan|sinh|cosh|tanh|asinh|acosh|atanh|length|distance|dot|cross|normalize|reflect|refract|faceforward|determinant|transpose|inverse|outerProduct|matrixCompMult|dFdx|dFdxCoarse|dFdxFine|dFdy|dFdyCoarse|dFdyFine|fwidth|fwidthCoarse|fwidthFine|radians|degrees|floatBitsToInt|floatBitsToUint|intBitsToFloat|uintBitsToFloat|isnan|isinf|lessThan|greaterThan|lessThanEqual|greaterThanEqual|equal|notEqual|any|all|not|bitfieldExtract|bitfieldInsert|bitfieldReverse|bitCount|findLSB|findMSB|imulExtended|umulExtended|uaddCarry|usubBorrow|packHalf2x16|unpackHalf2x16|packUnorm2x16|unpackUnorm2x16|packSnorm2x16|unpackSnorm2x16|packUnorm4x8|unpackUnorm4x8|packSnorm4x8|unpackSnorm4x8|ldexp|frexp|bool|int|uint|float|vec2|vec3|vec4|mat2|mat3|mat4)\\b"
         }
       ]
     },

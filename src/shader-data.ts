@@ -35,7 +35,9 @@ export const GODOT_SHADER_BUILTINS: BuiltinsMap = {
         { name: "RENDERER_FORWARD_PLUS", type: "int", description: "Forward+ 渲染器常量（值为 0）" },
         { name: "RENDERER_MOBILE", type: "int", description: "Mobile 渲染器常量（值为 1）" },
         { name: "RENDERER_COMPATIBILITY", type: "int", description: "Compatibility 渲染器常量（值为 2）" },
-        { name: "RENDERER_FORWARD", type: "int", description: "Forward 渲染器常量（值为 3），Godot 4.3+" }
+        { name: "RENDERER_FORWARD", type: "int", description: "Forward 渲染器常量（值为 3），Godot 4.3+" },
+        { name: "IS_MULTIVIEW", type: "bool", description: "是否为立体（XR）输出（Godot 4.7+）" },
+        { name: "IN_SHADOW_PASS", type: "bool", description: "是否在阴影贴图通道中渲染（Godot 4.7+），可用于阴影通道中差异化渲染" }
     ],
     
     // 顶点着色器输入变量（只读）
@@ -404,7 +406,79 @@ export const GODOT_SHADER_FUNCTIONS = [
     // 导数函数（仅在 fragment/light 函数中可用）
     { name: "dFdx", signature: "dFdx(vecX p)", description: "屏幕空间 x 方向偏导数。仅在 fragment() 和 light() 中可用" },
     { name: "dFdy", signature: "dFdy(vecX p)", description: "屏幕空间 y 方向偏导数。仅在 fragment() 和 light() 中可用" },
-    { name: "fwidth", signature: "fwidth(vecX p)", description: "偏导数绝对值之和：abs(dFdx(p)) + abs(dFdy(p))。用于估算变化率" }
+    { name: "fwidth", signature: "fwidth(vecX p)", description: "偏导数绝对值之和：abs(dFdx(p)) + abs(dFdy(p))。用于估算变化率" },
+    { name: "dFdxCoarse", signature: "dFdxCoarse(vecX p)", description: "x 方向粗粒度偏导数（仅 fragment/light，Compatibility 不可用）" },
+    { name: "dFdxFine", signature: "dFdxFine(vecX p)", description: "x 方向细粒度偏导数（仅 fragment/light，Compatibility 不可用）" },
+    { name: "dFdyCoarse", signature: "dFdyCoarse(vecX p)", description: "y 方向粗粒度偏导数（仅 fragment/light，Compatibility 不可用）" },
+    { name: "dFdyFine", signature: "dFdyFine(vecX p)", description: "y 方向细粒度偏导数（仅 fragment/light，Compatibility 不可用）" },
+    { name: "fwidthCoarse", signature: "fwidthCoarse(vecX p)", description: "粗粒度偏导绝对值之和（仅 fragment/light，Compatibility 不可用）" },
+    { name: "fwidthFine", signature: "fwidthFine(vecX p)", description: "细粒度偏导绝对值之和（仅 fragment/light，Compatibility 不可用）" },
+    
+    // 浮点数和整数位操作
+    { name: "floatBitsToInt", signature: "ivecX floatBitsToInt(vecX x)", description: "浮点数位模式转有符号整数（不进行数值转换）" },
+    { name: "floatBitsToUint", signature: "uvecX floatBitsToUint(vecX x)", description: "浮点数位模式转无符号整数（不进行数值转换）" },
+    { name: "intBitsToFloat", signature: "vecX intBitsToFloat(ivecX x)", description: "有符号整数位模式转浮点数（不进行数值转换）" },
+    { name: "uintBitsToFloat", signature: "vecX uintBitsToFloat(uvecX x)", description: "无符号整数位模式转浮点数（不进行数值转换）" },
+    
+    // NaN/Inf 检测
+    { name: "isnan", signature: "bvecX isnan(vecX x)", description: "逐分量检测是否为 NaN" },
+    { name: "isinf", signature: "bvecX isinf(vecX x)", description: "逐分量检测是否为无穷大" },
+    
+    // 数值分离与构造
+    { name: "modf", signature: "vecX modf(vecX x, out vecX i)", description: "分离浮点数为整数部分(i)和小数部分（返回值）" },
+    { name: "fma", signature: "vecX fma(vecX a, vecX b, vecX c)", description: "融合乘加：a * b + c（单次舍入，精度更高）" },
+    { name: "roundEven", signature: "roundEven(vecX x)", description: "四舍五入到最近偶数整数" },
+    { name: "ldexp", signature: "vecX ldexp(vecX x, out ivecX exp)", description: "组合浮点数：x * 2^exp" },
+    { name: "frexp", signature: "vecX frexp(vecX x, out ivecX exp)", description: "分解浮点数为尾数（返回值，[0.5, 1.0)）和指数(exp)" },
+    
+    // 比较函数（逐分量）
+    { name: "lessThan", signature: "bvecX lessThan(vecX x, vecX y)", description: "逐分量比较 x < y" },
+    { name: "greaterThan", signature: "bvecX greaterThan(vecX x, vecX y)", description: "逐分量比较 x > y" },
+    { name: "lessThanEqual", signature: "bvecX lessThanEqual(vecX x, vecX y)", description: "逐分量比较 x <= y" },
+    { name: "greaterThanEqual", signature: "bvecX greaterThanEqual(vecX x, vecX y)", description: "逐分量比较 x >= y" },
+    { name: "equal", signature: "bvecX equal(vecX x, vecX y)", description: "逐分量比较 x == y" },
+    { name: "notEqual", signature: "bvecX notEqual(vecX x, vecX y)", description: "逐分量比较 x != y" },
+    { name: "any", signature: "bool any(bvecX x)", description: "任意分量为 true 则返回 true" },
+    { name: "all", signature: "bool all(bvecX x)", description: "全部分量为 true 才返回 true" },
+    { name: "not", signature: "bvecX not(bvecX x)", description: "逐分量逻辑取反" },
+    
+    // 矩阵逐分量乘法
+    { name: "matrixCompMult", signature: "matX matrixCompMult(matX x, matX y)", description: "矩阵逐分量乘法（非代数乘法）" },
+    
+    // 位域操作
+    { name: "bitfieldExtract", signature: "intX bitfieldExtract(intX value, int offset, int bits)", description: "提取整数中的位域 [offset, offset+bits-1]" },
+    { name: "bitfieldInsert", signature: "intX bitfieldInsert(intX base, intX insert, int offset, int bits)", description: "将 insert 的低 bits 位插入 base 的 [offset] 位置" },
+    { name: "bitfieldReverse", signature: "intX bitfieldReverse(intX value)", description: "反转整数的位顺序" },
+    { name: "bitCount", signature: "intX bitCount(intX value)", description: "统计整数中 1 位的个数" },
+    { name: "findLSB", signature: "intX findLSB(intX value)", description: "查找最低有效 1 位的索引（value=0 返回 -1）" },
+    { name: "findMSB", signature: "intX findMSB(intX value)", description: "查找最高有效 1 位的索引（value=0 或 -1 返回 -1）" },
+    
+    // 整数扩展运算
+    { name: "imulExtended", signature: "void imulExtended(intX x, intX y, out intX msb, out intX lsb)", description: "32位有符号乘法产生64位结果（msb高32位, lsb低32位）" },
+    { name: "umulExtended", signature: "void umulExtended(uintX x, uintX y, out uintX msb, out uintX lsb)", description: "32位无符号乘法产生64位结果（msb高32位, lsb低32位）" },
+    { name: "uaddCarry", signature: "uintX uaddCarry(uintX x, uintX y, out uintX carry)", description: "无符号加法并生成进位" },
+    { name: "usubBorrow", signature: "uintX usubBorrow(uintX x, uintX y, out uintX borrow)", description: "无符号减法并生成借位" },
+    
+    // 打包/解包函数
+    { name: "packHalf2x16", signature: "uint packHalf2x16(vec2 v)", description: "将两个 float 打包为 16 位半精度浮点并存入 uint" },
+    { name: "unpackHalf2x16", signature: "vec2 unpackHalf2x16(uint v)", description: "从 uint 解包两个 16 位半精度浮点为 vec2" },
+    { name: "packUnorm2x16", signature: "uint packUnorm2x16(vec2 v)", description: "将两个 [0,1] 浮点数打包为 16 位无符号归一化整数" },
+    { name: "unpackUnorm2x16", signature: "vec2 unpackUnorm2x16(uint v)", description: "解包两个 16 位无符号归一化整数为 [0,1] 浮点数" },
+    { name: "packSnorm2x16", signature: "uint packSnorm2x16(vec2 v)", description: "将两个 [-1,1] 浮点数打包为 16 位有符号归一化整数" },
+    { name: "unpackSnorm2x16", signature: "vec2 unpackSnorm2x16(uint v)", description: "解包两个 16 位有符号归一化整数为 [-1,1] 浮点数" },
+    { name: "packUnorm4x8", signature: "uint packUnorm4x8(vec4 v)", description: "将四个 [0,1] 浮点数打包为 8 位无符号归一化整数" },
+    { name: "unpackUnorm4x8", signature: "vec4 unpackUnorm4x8(uint v)", description: "解包四个 8 位无符号归一化整数为 [0,1] 浮点数" },
+    { name: "packSnorm4x8", signature: "uint packSnorm4x8(vec4 v)", description: "将四个 [-1,1] 浮点数打包为 8 位有符号归一化整数" },
+    { name: "unpackSnorm4x8", signature: "vec4 unpackSnorm4x8(uint v)", description: "解包四个 8 位有符号归一化整数为 [-1,1] 浮点数" },
+    
+    // 纹理函数补充
+    { name: "textureSize", signature: "ivecN textureSize(samplerX s, int lod)", description: "获取纹理指定 LOD 级别的尺寸" },
+    { name: "textureQueryLod", signature: "vec2 textureQueryLod(sampler2D s, vec2 p)", description: "查询纹理采样将使用的 LOD（仅 fragment）" },
+    { name: "textureQueryLevels", signature: "int textureQueryLevels(sampler2D s)", description: "查询纹理可访问的 mipmap 级别数" },
+    { name: "textureProjLod", signature: "vec4 textureProjLod(sampler2D s, vec3 p, float lod)", description: "投影纹理采样（指定 LOD）" },
+    { name: "textureProjGrad", signature: "vec4 textureProjGrad(sampler2D s, vec3 p, vec2 dPdx, vec2 dPdy)", description: "投影纹理采样（指定梯度）" },
+    { name: "texelFetch", signature: "vec4 texelFetch(sampler2D s, ivec2 p, int lod)", description: "使用整数坐标获取单个纹素（指定 LOD）" },
+    { name: "textureGather", signature: "vec4 textureGather(sampler2D s, vec2 p[, int comps])", description: "收集四个纹素（用于双线性过滤的自定义实现）" }
 ];
 
 export const GODOT_SHADER_TYPES = [

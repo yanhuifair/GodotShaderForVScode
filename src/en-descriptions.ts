@@ -150,8 +150,6 @@ export const EN_DESCRIPTIONS: Record<string, string> = {
     "ATTENUATION": "Light attenuation (read-write)",
     "LIGHT": "Light color (read-write)",
     "LIGHT_ENERGY": "Light energy (read-write)",
-    "LIGHT_DIFFUSE": "Diffuse lighting (read-write)",
-    "LIGHT_SPECULAR": "Specular lighting (read-write)",
     "texture": "Sample a 2D texture",
     "textureLod": "Sample a texture with explicit LOD",
     "textureProj": "Projective texture sampling",
@@ -168,8 +166,7 @@ export const EN_DESCRIPTIONS: Record<string, string> = {
     "tan": "Tangent function (x in radians)",
     "asin": "Arcsine (returns [-π/2, π/2])",
     "acos": "Arccosine (returns [0, π])",
-    "atan": "Arctangent (returns [-π, π])",
-    "atan2": "Arctangent with quadrant determination",
+    "atan": "Arctangent. Supports single-param (atan(y/x)) and two-param (atan(y, x)) forms",
     "sinh": "Hyperbolic sine",
     "cosh": "Hyperbolic cosine",
     "tanh": "Hyperbolic tangent",
@@ -356,5 +353,4 @@ export const EN_DESCRIPTIONS: Record<string, string> = {
     "SHADOW_VERTEX": "Same as VERTEX but can be written to alter shadows",
     // CanvasItem light function
     "LIGHT_POSITION": "Position of the Light2D in screen space (0,0,0 for DirectionalLight2D)",
-    "SHADOW_MODULATE": "Multiply shadows cast at this point by this color",
 };
