@@ -50,6 +50,10 @@ export class GodotShaderFormatter implements
         let indentLevel = 0;
         const caseLevels: number[] = [0];
         let inBlockComment = false;
+        // 无大括号的控制流语句（if/for/while/else）缩进计数
+        let bracelessIndent = 0;
+        // else 块的 body 消费后需额外回收其匹配 if 的一级缩进
+        let elseConsumesExtra = false;
         
         for (let i = 0; i < document.lineCount; i++) {
             const line = document.lineAt(i);
@@ -102,6 +106,7 @@ export class GodotShaderFormatter implements
             if (text.startsWith('}')) {
                 indentLevel = Math.max(0, indentLevel - 1);
                 if (caseLevels.length > 1) caseLevels.pop();
+                bracelessIndent = 0;  // } 关闭所有待处理的无大括号缩进
             }
             
             // case/default 标签使用 switch 块缩进，不额外缩进
@@ -125,6 +130,7 @@ export class GodotShaderFormatter implements
                 // 大括号后的行缩进 +1
                 indentLevel++;
                 caseLevels.push(0);
+                bracelessIndent = 0;  // 大括号接管缩进
                 continue;
             }
 
@@ -134,11 +140,16 @@ export class GodotShaderFormatter implements
                 lines.push(indentChar.repeat(effectiveIndent) + '{');
                 indentLevel++;
                 caseLevels.push(0);
+                bracelessIndent = 0;  // 大括号接管缩进
                 continue;
             }
 
             // ---- 常规单行大括号风格 ----
-            const effectiveIndent = isCaseLabel ? indentLevel : indentLevel + currentCaseLevel;
+            // 大括号行：提前重置无大括号缩进计数，避免前一代码块残留值影响缩进
+            if (text.endsWith('{')) {
+                bracelessIndent = 0;
+            }
+            const effectiveIndent = (isCaseLabel ? indentLevel : indentLevel + currentCaseLevel) + bracelessIndent;
             
             // 统一使用 formatLine 格式化
             const formattedLine = indentChar.repeat(effectiveIndent) + this.formatLine(text);
@@ -153,6 +164,7 @@ export class GodotShaderFormatter implements
             if (!braceNewLine && text.endsWith('{')) {
                 indentLevel++;
                 caseLevels.push(0);
+                bracelessIndent = 0;  // 大括号接管缩进
             }
             
             // 处理一行中有多个大括号的情况
@@ -163,6 +175,27 @@ export class GodotShaderFormatter implements
             }
             if (closeBraces > 0 && !text.startsWith('}')) {
                 indentLevel -= closeBraces;
+            }
+
+            // ---- 无大括号控制流缩进处理 ----
+            if (text === '{') {
+                bracelessIndent = 0;  // 非 braceNewLine 模式的单独 { 行
+                elseConsumesExtra = false;
+            } else if (/^(if|for|while)\s*\(/.test(text) && !text.includes('{')) {
+                // 无大括号的 if/for/while → 下一行缩进 +1
+                bracelessIndent++;
+            } else if (/^else\b/.test(text) && !text.includes('{')) {
+                // 无大括号的 else → 下一行缩进 +1；标记 else 块结束需额外回收一级
+                bracelessIndent++;
+                elseConsumesExtra = true;
+            } else if (bracelessIndent > 0 && !this.isContinuationLine(text)) {
+                // 普通 body 行 → 消费一级缩进
+                bracelessIndent = Math.max(0, bracelessIndent - 1);
+                // else 块的 body 消费后，额外回收其匹配 if 贡献的一级
+                if (elseConsumesExtra) {
+                    bracelessIndent = Math.max(0, bracelessIndent - 1);
+                    elseConsumesExtra = false;
+                }
             }
         }
         
@@ -220,6 +253,11 @@ export class GodotShaderFormatter implements
         const trimmed = text.trim();
         return trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*');
     }
+
+    // 判断是否为续行（行尾以运算符或逗号结尾，表示表达式未结束）
+    private isContinuationLine(text: string): boolean {
+        return /[,\+\-\*\/\(=\?\:]$/.test(text) || /&&\s*$/.test(text) || /\|\|\s*$/.test(text);
+    }
     
     // 格式化单行 - 保留注释
     private formatLine(line: string): string {
@@ -273,7 +311,9 @@ export class GodotShaderFormatter implements
         let formatted = code.trim();
         
         // 1. 规范化逗号：去除逗号前后多余空格，逗号后留一个空格: "a ,  b" -> "a, b"
+        // 排除行尾逗号（续行符），不添加尾随空格
         formatted = formatted.replace(/\s*,\s*/g, ', ');
+        formatted = formatted.replace(/,\s+$/g, ',');
         
         // 2. 去除括号内多余的空格: "func( a, b )" -> "func(a, b)"
         formatted = formatted.replace(/\(\s+/g, '(');
@@ -290,6 +330,9 @@ export class GodotShaderFormatter implements
         
         // 4. 分号前去除空格: "a = b ;" -> "a = b;"
         formatted = formatted.replace(/\s+;/g, ';');
+        
+        // 4b. 分号后添加空格: "a;b" -> "a; b"（排除行尾分号）
+        formatted = formatted.replace(/;(\S)/g, '; $1');
         
         // 5. 冒号后添加空格（用于 uniform hint）: ":filter" -> ": filter"
         // 排除三元运算符 ? : 和标签 case: default:
@@ -324,6 +367,12 @@ export class GodotShaderFormatter implements
         
         // 恢复科学计数法指数符号
         formatted = formatted.replace(/\x00SCI([+-])\x00/g, '$1');
+        
+        // 9b. 比较/逻辑运算符两侧添加空格: == != >= <= > < && ||
+        formatted = formatted.replace(/([a-zA-Z0-9_\)\]])\s*(&&|\|\||==|!=|>=|<=)\s*([a-zA-Z0-9_\(\!\-\~])/g, '$1 $2 $3');
+        // 单字符 < > 需要排除位移运算符 << >> 
+        formatted = formatted.replace(/([a-zA-Z0-9_\)\]])\s*<(?![<=])\s*([a-zA-Z0-9_\(\!\-\~])/g, '$1 < $2');
+        formatted = formatted.replace(/([a-zA-Z0-9_\)\]])\s*>(?![>=])\s*([a-zA-Z0-9_\(\!\-\~])/g, '$1 > $2');
         
         // 10. 最后再次修复复合赋值运算符（防止被错误拆分）
         formatted = formatted.replace(/([a-zA-Z0-9_\)\]])\s*\/\s*=\s*([a-zA-Z0-9_\(\[])/g, '$1 /= $2');

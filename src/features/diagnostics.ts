@@ -127,6 +127,11 @@ export class GodotShaderDiagnosticProvider {
     }
 
     private checkShaderType(lines: string[], diagnostics: vscode.Diagnostic[], document: vscode.TextDocument) {
+        // .gdshaderinc 包含文件不需要 shader_type 声明
+        if (document.fileName.endsWith('.gdshaderinc')) {
+            return;
+        }
+
         let found = false;
         const validTypes = ['canvas_item', 'fog', 'particles', 'sky', 'spatial'];
 

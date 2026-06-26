@@ -4,4 +4,5 @@ out/
 .DS_Store
 auto-version.js
 test/
+test_file/
 
