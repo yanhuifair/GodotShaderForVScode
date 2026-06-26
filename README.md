@@ -2,10 +2,10 @@
 <div align="center">
 
 ![VS Code](https://img.shields.io/badge/VS%20Code-1.120%2B-007ACC?logo=visualstudiocode&logoColor=white)
-![Version](https://img.shields.io/badge/version-1.0.100-2ea44f)
+![Version](https://img.shields.io/badge/version-1.0.103-2ea44f)
 ![Lang](https://img.shields.io/badge/language-zh%2Fen-ff9800)
 ![License](https://img.shields.io/badge/license-MIT-blue)
-![Stars](https://img.shields.io/github/stars/yanhuifair/GodotShaderForVScode?style=flat-square)
+![Stars](https://img.shields.io/github/stars/yanhuifair/Godot-Shader-For-VScode?style=flat-square)
 [![Marketplace](https://img.shields.io/badge/VS%20Code%20Marketplace-Install-blue?logo=visualstudio)](https://marketplace.visualstudio.com/items?itemName=fairyan.godot-shader-for-vscode)
 
 </div>
@@ -35,8 +35,8 @@ The best Godot Shader development extension — 20 providers, 160+ built-ins, 74
 ### Method 2: Build from Source
 
 ```bash
-git clone https://github.com/yanhuifair/GodotShaderForVScode.git
-cd GodotShaderForVScode
+git clone https://github.com/yanhuifair/Godot-Shader-For-VScode.git
+cd Godot-Shader-For-VScode
 npm install
 npx vsce package
 ```
@@ -327,11 +327,11 @@ MIT © [Fair Yan](https://github.com/yanhuifair)
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=yanhuifair%2FGodotShaderForVScode&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=yanhuifair%2FGodot-Shader-For-VScode&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=yanhuifair/GodotShaderForVScode&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=yanhuifair/GodotShaderForVScode&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=yanhuifair/GodotShaderForVScode&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=yanhuifair/Godot-Shader-For-VScode&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=yanhuifair/Godot-Shader-For-VScode&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=yanhuifair/Godot-Shader-For-VScode&type=date&legend=top-left" />
  </picture>
 </a>
 
